@@ -6,4 +6,4 @@ from django.contrib import admin
 from .models import History
 
 #register history on admin site
-admin.site.register(History)
+#admin.site.register(History)

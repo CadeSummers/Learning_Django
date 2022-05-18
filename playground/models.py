@@ -11,6 +11,7 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 #Class containing history
+
 class History(models.Model):
 
     #definite use attribute of history as models ForeignKey Method on User
@@ -28,3 +29,5 @@ class History(models.Model):
 
     #set page viewership (automatically)
     viewed_on = models.DateTimeField(auto_now_add=True)
+
+

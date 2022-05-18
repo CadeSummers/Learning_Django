@@ -12,6 +12,14 @@ urlpatterns = [
 
     path('goodbye/', views.say_goodbye),
 
-    path('homepage/', views.homepage)
+    path('homepage/', views.homepage),
+
+    path('history/', views.history),
+
+    path('register/', views.register_request),
+
+    path('login/', views.login_request)
+
+    #path('playground/', views.playground)
 
 ]
