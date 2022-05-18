@@ -13,6 +13,9 @@ from django.contrib import messages
 #take custom made object History from models.py
 from .models import History
 
+#import the entirety of the request module
+import requests
+
 
 # Create your views here.
 #view functions take in requests and return responses
@@ -98,6 +101,20 @@ def login_request(request):
 
                 #log them in
                 login(request, user)
+
+                #grant session
+                session = requests.Session()
+
+                #print to server
+                print(session)
+
+                #TODO implement sessions
+
+                #print(session.get('https://httpbin.org/cookies/set/sessioncookie/123456789'))
+                
+                #r = session.get('https://httpbin.org/cookies')
+
+                #print(r) 
 
                 #inform user of success
                 messages.info(request, f"You are now logged in as {username}.")
