@@ -9,6 +9,12 @@ from django.contrib.auth import login, authenticate
 from .forms import NewUserForm
 #import message functionalilty
 from django.contrib import messages
+#import datetime field from .models.fields
+#from django.db.models.fields import DateTimeField
+
+#import datetime from datetime (to use datetime.now())
+from datetime import datetime
+
 
 #take custom made object History from models.py
 from .models import History
@@ -87,14 +93,10 @@ def login_request(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
-            #print("----------HERE---------")
-            #print(username + ":" + password)
-
             user = authenticate(username=username, password=password)
 
             print("USER")
             print(user)
-            print("ABOVE")
 
             #if the user exists
             if user is not None:
@@ -102,19 +104,22 @@ def login_request(request):
                 #log them in
                 login(request, user)
 
-                #grant session
-                session = requests.Session()
+                #save a variable data as the request.POST values
+                data = request.POST
 
-                #print to server
-                print(session)
+                timestamp = datetime.now()
+                print("TIMESTAMP")
+                print(datetime.now())
 
-                #TODO implement sessions
+                #creation of list of keys to be passed to the_eye
+                #form session_id, category, name, data, timestamp 
+                keys = [str(request.session.session_key), "User Auth & Registry", "Login", data, timestamp ]
 
-                #print(session.get('https://httpbin.org/cookies/set/sessioncookie/123456789'))
-                
-                #r = session.get('https://httpbin.org/cookies')
+                print('KEYS')
+                print(keys)
 
-                #print(r) 
+                #calling the_eye
+                the_eye(request, keys, event="login")
 
                 #inform user of success
                 messages.info(request, f"You are now logged in as {username}.")
@@ -126,10 +131,12 @@ def login_request(request):
 
             #otherwise inform failure    
             else:
+
                 messages.error(request, "Invalid username and/or password.")
 
         #if invalid form, inform failure
         else:   
+
             messages.error(request, "Invalid username and/or password.")
     
     #otherwise, if request method is ostensibly GET
@@ -146,10 +153,40 @@ def history(request):
    #return an instance of history rendered with hello.html
    return render(request, 'hello.html', {'name' : History()})
 
+#function for setting cookie
+def set_cookie(request):
 
-#def login(request):
+    pass
 
-#    return render(request, 'login.html')
-#def playground(request):
+#function for getting cookie
+def get_cookie(request):
 
-#    return render(request, 'playgrond.html')
+    pass
+
+
+#define function the_eye to track information from cookie
+
+#define a function that takes in a request and an event, which must be a string (to serve as value in key value pair), and the keys, the actual value to fill the request at that index with.
+#function 'the_eye' will be called on event request
+def the_eye(request, keys, event: str): #add argument for session id?
+
+    #session is a dictionary-like object
+
+    #session_key refers to the sessionid in Django
+
+    #create a list of all required data value's in dict-like object
+    format_list = ["session_id", "category", "name", "data", "timestamp"]
+
+    #append the session with an event, correlated to the above dict-like object
+    request.session[event] = format_list
+
+    #printcheck
+    #print(request.session[event["session_id"]])
+
+    #for item, key in request.session:
+    #    print(item)
+    #    print(key)
+
+    #some final return, which avoids races conditions, collisions, and can handle multiple inputs at once
+    
+
