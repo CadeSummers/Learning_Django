@@ -107,19 +107,21 @@ def login_request(request):
                 #save a variable data as the request.POST values
                 data = request.POST
 
+                print("Data")
+                #print(data['username']) #will need this for forms
+                #print(data['password']) #will need this for forms
+                print(request.path_info) #will need this
+                #print()
+
+                #createa timestamp for the request
                 timestamp = datetime.now()
-                print("TIMESTAMP")
-                print(datetime.now())
 
                 #creation of list of keys to be passed to the_eye
                 #form session_id, category, name, data, timestamp 
-                keys = [str(request.session.session_key), "User Auth & Registry", "Login", data, timestamp ]
-
-                print('KEYS')
-                print(keys)
+                event_values = [request.session.session_key, "User Auth & Registry", "Login", data, str(timestamp)]
 
                 #calling the_eye
-                the_eye(request, keys, event="login")
+                the_eye(request, event_values, event="login")
 
                 #inform user of success
                 messages.info(request, f"You are now logged in as {username}.")
@@ -153,32 +155,45 @@ def history(request):
    #return an instance of history rendered with hello.html
    return render(request, 'hello.html', {'name' : History()})
 
-#function for setting cookie
-def set_cookie(request):
-
-    pass
-
-#function for getting cookie
-def get_cookie(request):
-
-    pass
-
 
 #define function the_eye to track information from cookie
 
 #define a function that takes in a request and an event, which must be a string (to serve as value in key value pair), and the keys, the actual value to fill the request at that index with.
 #function 'the_eye' will be called on event request
-def the_eye(request, keys, event: str): #add argument for session id?
+def the_eye(request, event_values, event: str): #add argument for session id?
 
     #session is a dictionary-like object
 
     #session_key refers to the sessionid in Django
+    data = request.POST
+    path = request.path_info
+    #
+    #
+    timesamp = datetime.now()
 
     #create a list of all required data value's in dict-like object
-    format_list = ["session_id", "category", "name", "data", "timestamp"]
+    key_list = ["session_id", "category", "name", "data", "timestamp"]
+
+    #if the length of keys doesn't match the length of format list
+    if len(event_values) != 5:
+        
+        #report failure
+        print("The eye failed! Try again.")
+        return -1
+
+    #declaration of an event dictionary
+    event_dict = {key_list[i]: event_values[i] for i in range(5)}
+
+    print("Session_key")
+    print(event_values[0])
+
+    print("Event_Dict: ")
+    print(event_dict)
+
+    #TODO zip format_list to keys
 
     #append the session with an event, correlated to the above dict-like object
-    request.session[event] = format_list
+    request.session[event] = event_dict
 
     #printcheck
     #print(request.session[event["session_id"]])
